@@ -9,6 +9,32 @@ var shuffle = false; // Mainīgais, kas norāda, vai dziesmas tiek sajauktas
 var userLoggedIn; // Mainīgais, kas satur pašreizējā lietotāja informāciju
 var timer; // Mainīgais, kas satur taimeri
 
+$(document).click(function(click) { 
+    var target = $(click.target); 
+    if(!target.hasClass("item") && !target.hasClass("optionsButton")) {
+        hideOptionsMenu();
+    }
+});
+
+$(window).scroll(function() { 
+    hideOptionsMenu();
+});
+
+$(document).on("change", "select.playlist", function() {
+    var select = $(this);
+    var playlistId = select.val();
+    var songId = select.prev(".songId").val();
+    
+    $.post("includes/handlers/ajax/addToPlaylist.php", {playlistId: playlistId, songId: songId}).done(function(error) {
+        if(error != "") {
+            alert(error);
+            return;
+        }
+        hideOptionsMenu();
+        select.val("");
+    })
+    })
+
 // Funkcija, lai atvērtu lapu ar nosūtīto URL
 function openPage(url) {
     if(timer != null) { // Ja timeris ir iestatīts, to notīra
@@ -33,6 +59,38 @@ function openPage(url) {
     history.pushState(null, null, url);
 }
 
+function removeFromPlaylist(button, playlistId) {
+    var songId = $(button).prevAll(".songId").val();
+
+    $.post("includes/handlers/ajax/removeFromPlaylist.php", {playlistId: playlistId, songId: songId}).done(function(error){
+        if(error != "") {
+            alert(error);
+            return;
+        }
+
+        openPage("playlist.php?id=" + playlistId);
+    });
+}
+function logout() {
+    $.post("includes/handlers/ajax/logout.php", function() {
+        location.reload();
+    });
+}
+function updateEmail(emailClass){
+    var emailValue = $("." + emailClass).val();
+    $.post("includes/handlers/ajax/updateEmail.php", {email: emailValue, username: userLoggedIn}).done(function(response) {
+        $("." + emailClass).nextAll(".message").text(response);
+    });
+}
+function updatePassword(oldPasswordClass, newPasswordClass1, newPasswordClass2) {
+    var oldPassword = $("." + oldPasswordClass).val();
+    var newPassword1 = $("." + newPasswordClass1).val();
+    var newPassword2 = $("." + newPasswordClass2).val();
+    
+    $.post("includes/handlers/ajax/updatePassword.php", {oldPassword: oldPassword, newPassword1: newPassword1, newPassword2: newPassword2, username: userLoggedIn}).done(function(response) {
+        $("." + oldPasswordClass).nextAll(".message").text(response);
+    });
+}
 // Funkcija, lai izveidotu jaunu atskaņošanas sarakstu
 function createPlaylist() {
     var popup = prompt("Please enter playlist name", ""); // Uzliek uzvedni, lai lietotājs ievadītu saraksta nosaukumu
@@ -50,6 +108,42 @@ function createPlaylist() {
     }
 }
 
+function deletePlaylist(playlistId) {
+    var prompt = confirm("Are you sure you want to delete this playlist?"); 
+    if(prompt == true) { 
+        $.post("includes/handlers/ajax/deletePlaylist.php", {playlistId: playlistId})
+        .done(function(error) {
+            if(error != "") {
+                alert(error);
+                return;
+            }
+            openPage("yourMusic.php");
+        });
+    }
+}
+
+function showOptionsMenu(button) {
+    var songId = $(button).prevAll(".songId").val();
+    var menu = $(".optionsMenu");
+    var menuWidth = menu.width(); 
+    menu.find(".songId").val(songId);
+
+    var scrollTop = $(window).scrollTop();
+    var elementOffset = $(button).offset().top;
+
+    var top = elementOffset - scrollTop;
+    var left = $(button).position().left;
+    
+    menu.css ({
+        "top": top + "px", "left": left - menuWidth + "px", "display": "inline"
+    });
+}
+function hideOptionsMenu() {
+    var menu = $(".optionsMenu");
+    if (menu.css("display") != "none") {
+        menu.css("display", "none");
+    }
+}
 // Funkcija laika formātam (minūtes:sekundes) konvertēšanai
 function formatTime(seconds) {
     var time = Math.round(seconds); // Pārveido sekundes uz veselu skaitli
@@ -133,4 +227,5 @@ function Audio() {
     this.setTime = function(seconds) {
         this.audio.currentTime = seconds; // Iestata audio pašreizējo laiku
     }
+    
 }

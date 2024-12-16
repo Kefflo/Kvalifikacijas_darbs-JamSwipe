@@ -48,14 +48,15 @@ $artist = $album->getArtist();
                         </div>
 
                         <div class='trackOptions'>
-                            <img class='optionsButton' src='assets/images/icons/more.png'> 
+                            <input type='hidden' class='songId' value='" . $albumSong->getId() . "'>
+                            <img class='optionsButton' src='assets/images/icons/more.png' onclick='showOptionsMenu(this)'>
                         </div>
 
                         <div class='trackDuration'>
                             <span class='duration'>" . $albumSong->getDuration() . "</span>
                         </div>
                     </li>";
-                $i++; // Palielina dziesmas numuru
+                $i++;
             }
         ?>
 
@@ -66,3 +67,11 @@ $artist = $album->getArtist();
         </script>
     </ul>
 </div>
+
+
+
+
+<nav class="optionsMenu">
+    <input type="hidden" class="songId">
+    <?php echo Playlist::getPlaylistsDropdown($con, $userLoggedIn->getUsername());?>
+</nav>

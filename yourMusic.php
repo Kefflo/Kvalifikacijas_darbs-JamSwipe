@@ -19,7 +19,7 @@ include("includes/includedFiles.php"); // Iekļauj nepieciešamos failus, piemē
 
         // Ja nav atrasti atskaņošanas saraksti, izvada ziņu
         if(mysqli_num_rows($playlistQuery) == 0) {
-            echo "<span class='noResults'>No results found for " . $term . "</span>";
+            echo "<span class='noResults'>No results found </span>";
         }
 
         // Pārlasa katru atrasto atskaņošanas sarakstu un izvada to informāciju

@@ -20,7 +20,7 @@
                 <span role="link" tabindex="0" onclick="openPage('yourMusic.php')" class="navItemLink">Your Music</span> <!-- Saite uz jūsu mūzikas lapu -->
             </div>
             <div class="navItem">  <!-- Atsevišķa izvēlnes vienība -->
-                <span role="link" tabindex="0" onclick="openPage('profile.php')" class="navItemLink">Your Profile</span> <!-- Saite uz lietotāja profilu lapu -->
+                <span role="link" tabindex="0" onclick="openPage('settings.php')" class="navItemLink"><?php echo $userLoggedIn->getFirstAndLastName(); ?></span> <!-- Saite uz lietotāja profilu lapu -->
             </div>
         </div>
 
