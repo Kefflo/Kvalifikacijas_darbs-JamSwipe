@@ -1,33 +1,33 @@
 <?php
 
-// Pārbauda, vai pieprasījums ir veikts ar AJAX, pārbaudot HTTP galveni 'HTTP_X_REQUESTED_WITH'
+// Check if the request is made via AJAX by checking the HTTP header 'HTTP_X_REQUESTED_WITH'
 if(isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-    include("includes/config.php");  // Iekļauj konfigurācijas failu, kas satur savienojuma informāciju ar datubāzi
-    include("includes/classes/User.php");  // Iekļauj lietotāja klasi
-    include("includes/classes/Artist.php");  // Iekļauj mākslinieka klasi
-    include("includes/classes/Album.php");   // Iekļauj albuma klasi
-    include("includes/classes/Song.php");    // Iekļauj dziesmas klasi
-    include("includes/classes/Playlist.php");  // Iekļauj atskaņošanas saraksta klasi
+    include("includes/config.php");  // Include the configuration file with database connection information
+    include("includes/classes/User.php");  // Include the User class
+    include("includes/classes/Artist.php");  // Include the Artist class
+    include("includes/classes/Album.php");   // Include the Album class
+    include("includes/classes/Song.php");    // Include the Song class
+    include("includes/classes/Playlist.php");  // Include the Playlist class
+    include("includes/classes/Genre.php");  // Include the Genre class
     
-    // Pārbauda, vai URL ir norādīts pieteikušā lietotāja vārds
+    // Check if the logged-in user's username is provided via GET or POST
     if(isset($_GET['userLoggedIn'])) {
-        // Ja ir, izveido jaunu lietotāja objektu, izmantojot lietotāja vārdu no URL
         $userLoggedIn = new User($con, $_GET['userLoggedIn']); 
+    } elseif(isset($_POST['userLoggedIn'])) {
+        $userLoggedIn = new User($con, $_POST['userLoggedIn']);
+    } else {
+        echo "userLoggedIn not set";  // If not, output an error message
+        exit();  // Stop execution
     }
-    else {
-        echo "userLoggedIn not set";  // Ja nav norādīts, izvada kļūdas ziņu
-        exit();  // Beidz izpildi
-    }
-}
-else {
-    // Ja pieprasījums nav AJAX, iekļauj lapas galvu un kājeni
+} else {
+    // If the request is not AJAX, include the page header and footer
     include("includes/header.php");
     include("includes/footer.php");
 
-    // Iegūst pašreizējo URL un izsauc JavaScript funkciju 'openPage' ar šo URL kā argumentu
+    // Get the current URL and call the JavaScript function 'openPage' with this URL as an argument
     $url = $_SERVER['REQUEST_URI'];
     echo "<script>openPage('$url')</script>";
-    exit();  // Beidz izpildi
+    exit();  // Stop execution
 }
 
 ?>
