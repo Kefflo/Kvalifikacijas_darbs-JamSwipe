@@ -9,32 +9,40 @@ var shuffle = false; // Mainīgais, kas norāda, vai dziesmas tiek sajauktas
 var userLoggedIn; // Mainīgais, kas satur pašreizējā lietotāja informāciju
 var timer; // Mainīgais, kas satur taimeri
 
+// Dokumenta noklikšķināšanas notikums
 $(document).click(function (click) {
+  // Iegūst elementu, uz kura tika uzklikšķināts
   var target = $(click.target);
+
+  // Pārbauda, vai klikšķa mērķis nav elements ar klasi "item" vai "optionsButton"
   if (!target.hasClass("item") && !target.hasClass("optionsButton")) {
-    hideOptionsMenu();
+    hideOptionsMenu(); // Paslēpj opciju izvēlni
   }
 });
 
+// Loga ritināšanas notikums
 $(window).scroll(function () {
-  hideOptionsMenu();
+  hideOptionsMenu(); // Paslēpj opciju izvēlni, ja logs tiek ritināts
 });
 
+// Notikums, kas izpildās, kad tiek mainīta izvēlne ar klasi "playlist"
 $(document).on("change", "select.playlist", function () {
-  var select = $(this);
-  var playlistId = select.val();
-  var songId = select.prev(".songId").val();
+  var select = $(this); // Iegūst pašreizējo izvēlni
+  var playlistId = select.val(); // Iegūst izvēlēto atskaņošanas saraksta ID
+  var songId = select.prev(".songId").val(); // Iegūst dziesmas ID no iepriekšējā elementa
 
+  // Nosūta POST pieprasījumu serverim, lai pievienotu dziesmu atskaņošanas sarakstam
   $.post("includes/handlers/ajax/addToPlaylist.php", {
-    playlistId: playlistId,
-    songId: songId,
+    playlistId: playlistId, // Atskaņošanas saraksta ID
+    songId: songId, // Dziesmas ID
   }).done(function (error) {
+    // Ja serveris atgriež kļūdas ziņojumu
     if (error != "") {
-      alert(error);
-      return;
+      alert(error); // Parāda kļūdas paziņojumu lietotājam
+      return; // Beidz funkcijas izpildi
     }
-    hideOptionsMenu();
-    select.val("");
+    hideOptionsMenu(); // Paslēpj opciju izvēlni
+    select.val(""); // Atiestata izvēlni
   });
 });
 
@@ -63,57 +71,81 @@ function openPage(url) {
   history.pushState(null, null, url);
 }
 
+// Funkcija noņem dziesmu no atskaņošanas saraksta
 function removeFromPlaylist(button, playlistId) {
+  // Iegūst dziesmas ID no pogas iepriekšējās elementa vērtības
   var songId = $(button).prevAll(".songId").val();
 
+  // Nosūta POST pieprasījumu serverim, lai noņemtu dziesmu no saraksta
   $.post("includes/handlers/ajax/removeFromPlaylist.php", {
-    playlistId: playlistId,
-    songId: songId,
+    playlistId: playlistId, // Atskaņošanas saraksta ID
+    songId: songId, // Dziesmas ID
   }).done(function (error) {
+    // Ja serveris atgriež kļūdas ziņojumu
     if (error != "") {
-      alert(error);
-      return;
+      alert(error); // Parāda kļūdas paziņojumu lietotājam
+      return; // Beidz funkcijas izpildi
     }
 
+    // Ja nav kļūdu, pāriet uz atskaņošanas saraksta lapu
     openPage("playlist.php?id=" + playlistId);
   });
 }
+
+// Funkcija iziet no lietotāja konta
 function logout() {
+  // Nosūta POST pieprasījumu serverim, lai izietu no konta
   $.post("includes/handlers/ajax/logout.php", function () {
-    location.reload();
+    location.reload(); // Pārlādē lapu pēc iziešanas
   });
 }
-function updateEmail(emailClass) {
-  var emailValue = $("." + emailClass).val();
-  $.post("includes/handlers/ajax/updateEmail.php", {
-    email: emailValue,
-    username: userLoggedIn,
+
+// Funkcija atjaunina lietotāja e-pasta adresi
+function updateUsername(usernameClass) {
+  var usernameValue = $("." + usernameClass).val();
+
+  $.post("includes/handlers/ajax/updateUsername.php", {
+    username: usernameValue, 
+    userLoggedIn: userLoggedIn, 
   }).done(function (response) {
-    $("." + emailClass)
+
+    $("." + usernameClass)
       .nextAll(".message")
       .text(response);
+
+
+      if (response.trim() === "Update successful") {
+      $("." + usernameClass).val(usernameValue);
+      $("#navUsername").text(usernameValue);
+      userLoggedIn = usernameValue;
+    }
   });
 }
+// Funkcija atjaunina lietotāja paroli
 function updatePassword(
   oldPasswordClass,
   newPasswordClass1,
   newPasswordClass2
 ) {
+  // Iegūst veco un jauno paroli no ievades laukiem
   var oldPassword = $("." + oldPasswordClass).val();
   var newPassword1 = $("." + newPasswordClass1).val();
   var newPassword2 = $("." + newPasswordClass2).val();
 
+  // Nosūta POST pieprasījumu serverim, lai atjauninātu paroli
   $.post("includes/handlers/ajax/updatePassword.php", {
-    oldPassword: oldPassword,
-    newPassword1: newPassword1,
-    newPassword2: newPassword2,
-    username: userLoggedIn,
+    oldPassword: oldPassword, // Vecā parole
+    newPassword1: newPassword1, // Jaunā parole (1. ievade)
+    newPassword2: newPassword2, // Jaunā parole (2. ievade)
+    username: userLoggedIn, // Pašreizējais lietotāja vārds
   }).done(function (response) {
+    // Parāda atbildi blakus vecās paroles ievades laukam
     $("." + oldPasswordClass)
       .nextAll(".message")
       .text(response);
   });
 }
+
 // Funkcija, lai izveidotu jaunu atskaņošanas sarakstu
 function createPlaylist() {
   var popup = prompt("Please enter playlist name", ""); // Uzliek uzvedni, lai lietotājs ievadītu saraksta nosaukumu
@@ -135,44 +167,58 @@ function createPlaylist() {
   }
 }
 
+// Funkcija dzēš atskaņošanas sarakstu pēc norādītā ID
 function deletePlaylist(playlistId) {
+  // Lietotājam tiek parādīts apstiprinājuma logs
   var prompt = confirm("Are you sure you want to delete this playlist?");
   if (prompt == true) {
+    // Ja lietotājs apstiprina, tiek nosūtīts POST pieprasījums uz serveri, lai dzēstu sarakstu
     $.post("includes/handlers/ajax/deletePlaylist.php", {
-      playlistId: playlistId,
+      playlistId: playlistId, // Saraksta ID tiek nosūtīts kā parametrs
     }).done(function (error) {
+      // Ja serveris atgriež kļūdas ziņojumu
       if (error != "") {
-        alert(error);
-        return;
+        alert(error); // Parādīt kļūdas paziņojumu lietotājam
+        return; 
       }
+      // Ja nav kļūdu, pāriet uz lapu "yourMusic.php"
       openPage("yourMusic.php");
     });
   }
 }
-function showOptionsMenu(button) {
-  var songId = $(button).prevAll(".songId").val();
-  var menu = $(".optionsMenu");
-  var menuWidth = menu.width();
-  menu.find(".songId").val(songId);
 
+// Funkcija parāda opciju izvēlni
+function showOptionsMenu(button) {
+  // Iegūst dziesmas ID no pogas iepriekšējās elementa vērtības
+  var songId = $(button).prevAll(".songId").val();
+  var menu = $(".optionsMenu"); // Atskaņošanas opciju izvēlnes elements
+  var menuWidth = menu.width(); // Nosaka izvēlnes platumu
+  menu.find(".songId").val(songId); // Uzstāda dziesmas ID izvēlnē
+
+  // Iegūst ritinājuma un elementa atrašanās vietu logā
   var scrollTop = $(window).scrollTop();
   var elementOffset = $(button).offset().top;
 
-  var top = elementOffset - scrollTop;
-  var left = $(button).position().left;
+  var top = elementOffset - scrollTop; // Aprēķina izvēlnes vertikālo pozīciju
+  var left = $(button).position().left; // Iegūst pogas horizontālo pozīciju
 
+  // Uzstāda izvēlnes pozīciju un parāda to
   menu.css({
     top: top + "px",
-    left: left - menuWidth + "px",
-    display: "inline",
+    left: left - menuWidth + "px", // Izvieto izvēlni pa kreisi no pogas
+    display: "inline", // Parāda izvēlni
   });
 }
+
+// Funkcija paslēpj opciju izvēlni
 function hideOptionsMenu() {
-  var menu = $(".optionsMenu");
+  var menu = $(".optionsMenu"); // Atskaņošanas opciju izvēlnes elements
   if (menu.css("display") != "none") {
-    menu.css("display", "none");
+    // Ja izvēlne ir redzama
+    menu.css("display", "none"); // Paslēpj izvēlni
   }
 }
+
 // Funkcija laika formātam (minūtes:sekundes) konvertēšanai
 function formatTime(seconds) {
   var time = Math.round(seconds); // Pārveido sekundes uz veselu skaitli

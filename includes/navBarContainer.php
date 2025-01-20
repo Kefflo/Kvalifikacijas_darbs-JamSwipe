@@ -23,7 +23,7 @@
                 <span role="link" tabindex="0" onclick="openPage('recommendations.php')" class="navItemLink">Recommend</span> <!-- Saite uz rekomendācijas lapu -->
             </div>
             <div class="navItem">  <!-- Atsevišķa izvēlnes vienība -->
-                <span role="link" tabindex="0" onclick="openPage('settings.php')" class="navItemLink"><?php echo $userLoggedIn->getFirstAndLastName(); ?></span> <!-- Saite uz lietotāja profilu lapu -->
+                <span role="link" tabindex="0" onclick="openPage('settings.php')" class="navItemLink" id="navUsername"><?php echo $userLoggedIn->getUsername(); ?></span> <!-- Saite uz lietotāja profilu lapu -->
             </div>
         </div>
 

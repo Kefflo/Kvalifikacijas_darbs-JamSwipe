@@ -117,7 +117,7 @@
                 return;
             }
             // Ja parole ir pārāk gara vai pārāk īsa
-            if(strlen($pw) > 30 || strlen($pw) < 5) {
+            if(strlen($pw) > 30 || strlen($pw) < 8) {
                 array_push($this->errorArray, Constants::$passwordsCharacters); // Pievieno kļūdu masīvam
                 return;
             }

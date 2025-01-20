@@ -1,5 +1,4 @@
 <?php
-// Constants klase, kas glabā statiskas kļūdu ziņas
 class Constants {
 
     // Kļūda, ja paroles nesakrīt

@@ -43,14 +43,15 @@
         ?>
         
         <div id="background"> <!-- Fons visam lapas saturam -->
-            <div id="loginContainer"> <!-- Konteineris pieteikšanās un reģistrācijas formām -->
+            <div id="loginContainer">
+                 <!-- Konteineris pieteikšanās un reģistrācijas formām -->
                 <div id="inputContainer"> <!-- Konteineris ievades laukiem -->
                     <form id="loginForm" action="register.php" method="POST"> <!-- Pieteikšanās forma -->
                         <h2>Login into your account!</h2> <!-- Virsraksts pieteikšanās formai -->
                         <p>
                             <?php echo $account->getError(Constants::$loginFailed); ?> <!-- Izvada kļūdu ziņu, ja pieteikšanās neizdevās -->
                             <label for="loginUsername">Username</label> <!-- Lietotājvārda ievades lauks -->
-                            <input id="loginUsername" name="loginUsername" type="text" placeholder="e.g Armands Reimanis" value="<?php getInputValue('loginUsername')?>" required> <!-- Ievades lauks lietotājvārdam -->
+                            <input id="loginUsername" name="loginUsername" type="text" placeholder="e.g Kefflo" value="<?php getInputValue('loginUsername')?>" required> <!-- Ievades lauks lietotājvārdam -->
                         </p>
                         <p>
                             <label for="loginPassword">Password</label> <!-- Paroles ievades lauks -->
@@ -69,18 +70,18 @@
                             <?php echo $account->getError(Constants::$usernameCharacters); ?> <!-- Lietotājvārda garuma kļūdas ziņa -->
                             <?php echo $account->getError(Constants::$usernameTaken); ?> <!-- Lietotājvārda jau aizņemts kļūdas ziņa -->
                             <label for="username">Username</label> <!-- Lietotājvārda ievades lauks -->
-                            <input id="username" name="username" type="text" placeholder="e.g Armands Reimanis" value="<?php getInputValue('username')?>" required> <!-- Ievades lauks lietotājvārdam -->
+                            <input id="username" name="username" type="text" placeholder="e.g Kefflo" value="<?php getInputValue('username')?>" required> <!-- Ievades lauks lietotājvārdam -->
                         </p>
                         <p>
                             <?php echo $account->getError(Constants::$emailsDoNotMatch); ?> <!-- E-pasta nesaskaņošanās kļūdas ziņa -->
                             <?php echo $account->getError(Constants::$emailInvalid); ?> <!-- Nepareizs e-pasta formāts kļūdas ziņa -->
                             <?php echo $account->getError(Constants::$emailTaken); ?> <!-- E-pasta jau aizņemts kļūdas ziņa -->
                             <label for="email">e-mail</label> <!-- E-pasta ievades lauks -->
-                            <input id="email" name="email" type="email" placeholder="e.g armandsreimanis@inbox.lv" value="<?php getInputValue('email')?>" required> <!-- Ievades lauks e-pastam -->
+                            <input id="email" name="email" type="email" placeholder="e.g abc123@inbox.lv" value="<?php getInputValue('email')?>" required> <!-- Ievades lauks e-pastam -->
                         </p>
                         <p>
                             <label for="email2">Confirm email</label> <!-- E-pasta apstiprinājuma ievades lauks -->
-                            <input id="email2" name="email2" type="email" placeholder="e.g armandsreimanis@inbox.lv" value="<?php getInputValue('email2')?>" required> <!-- E-pasta apstiprinājuma ievades lauks -->
+                            <input id="email2" name="email2" type="email" placeholder="e.g abc123@inbox.lv" value="<?php getInputValue('email2')?>" required> <!-- E-pasta apstiprinājuma ievades lauks -->
                         </p>
                         <p>
                             <?php echo $account->getError(Constants::$passwordsDoNotMatch); ?> <!-- Paroles nesaskaņošanās kļūdas ziņa -->
@@ -89,24 +90,31 @@
                             <label for="password">Password</label> <!-- Paroles ievades lauks -->
                             <input id="password" name="password" type="password" placeholder="Your password" required> <!-- Ievades lauks parolei -->
                         </p>
+                        
                         <p>
-                            <label for="password2">Confirm password</label> <!-- Paroles apstiprinājuma ievades lauks -->
+                            <label for="password2">Confirm password</label>
                             <input id="password2" name="password2" type="password" placeholder="Your password" required> <!-- Paroles apstiprinājuma ievades lauks -->
                         </p>
-                        <button type="submit" name="registerButton">SIGN UP</button> <!-- Reģistrācijas poga -->
+                        <div id="passwordCriteria">
+                            <li id="lengthCriteria" class="criteria">Password must be at least 8 characters long</li>
+                            <li id="alphanumericCriteria" class="criteria">Password must contain both letters and numbers</li>
+                            <li id="matchCriteria" class="criteria">Passwords must match</li>
+                        </div>
+                        <button type="submit" name="registerButton">SIGN UP</button>
                         <div class="hasAccountText">
-                            <span id="hideRegister">Already have an account? Log in here.</span> <!-- Teksts, kas piedāvā pieteikties, ja lietotājs jau ir reģistrējies -->
+                            <span id="hideRegister">Already have an account? Log in here.</span>
                         </div> 
                     </form>
+                    
                 </div>
 
-                <div id="loginText"> <!-- Teksts labajā pusē -->
-                    <h1>Get great music, right now</h1> <!-- Virsraksts -->
-                    <h2>Listen to loads of songs for free</h2> <!-- Apakšvirsraksts -->
+                <div id="loginText"> 
+                    <h1>Get great music, right now</h1> 
+                    <h2>Listen to loads of songs for free</h2> 
                     <ul>
-                        <li>Discover music you'll fall in love with</li> <!-- Saraksts ar funkcijām -->
-                        <li>Create your own playlists</li> <!-- Saraksts ar funkcijām -->
-                        <li>Follow artists to keep up to date</li> <!-- Saraksts ar funkcijām -->
+                        <li>Discover music you'll fall in love with</li>
+                        <li>Create your own playlists</li>
+                        <li>Follow artists to keep up to date</li>
                     </ul>
                 </div> 
             </div>

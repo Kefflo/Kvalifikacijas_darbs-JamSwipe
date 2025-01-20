@@ -1,51 +1,73 @@
 <?php
-    class Song {
+// Klase Song pārstāv dziesmu un ar to saistīto informāciju
+class Song {
 
-        private $con;
-        private $id;
-        private $mysqliData;
-        private $title;
-        private $artistId;
-        private $albumId;
-        private $genre;
-        private $duration;
-        private $path;
+    // Privātie mainīgie: datubāzes savienojums, dziesmas ID un citi dati par dziesmu
+    private $con;
+    private $id;
+    private $mysqliData;
+    private $title;
+    private $artistId;
+    private $albumId;
+    private $genre;
+    private $duration;
+    private $path;
 
-        public function __construct($con, $id) {
-            $this->con = $con;
-            $this->id = $id;
+    // Konstruktors inicializē datubāzes savienojumu un dziesmas ID, ielādējot dziesmas datus
+    public function __construct($con, $id) {
+        $this->con = $con; // Saglabā datubāzes savienojumu
+        $this->id = $id;   // Saglabā dziesmas ID
 
-            $query = mysqli_query($this->con, "SELECT * FROM songs WHERE id='$this->id'");
-            $this->mysqliData = mysqli_fetch_array($query);
-            $this->title = $this->mysqliData['title'];
-            $this->artistId = $this->mysqliData['artist'];
-            $this->albumId = $this->mysqliData['album'];
-            $this->genre = $this->mysqliData['genre'];
-            $this->duration = $this->mysqliData['duration'];
-            $this->path = $this->mysqliData['path'];
+        // Veic pieprasījumu, lai iegūtu dziesmas informāciju pēc ID
+        $query = mysqli_query($this->con, "SELECT * FROM songs WHERE id='$this->id'");
+        $this->mysqliData = mysqli_fetch_array($query); // Saglabā rezultātus
+
+        // Inicializē dziesmas laukus no iegūtajiem datiem
+        $this->title = $this->mysqliData['title'];
+        $this->artistId = $this->mysqliData['artist'];
+        $this->albumId = $this->mysqliData['album'];
+        $this->genre = $this->mysqliData['genre'];
+        $this->duration = $this->mysqliData['duration'];
+        $this->path = $this->mysqliData['path'];
     }
-    public function getTitle()   {
+
+    // Funkcija atgriež dziesmas nosaukumu
+    public function getTitle() {
         return $this->title;
     }
-    public function getArtist()   {
+
+    // Funkcija atgriež Artist klases objektu, kas pārstāv dziesmas izpildītāju
+    public function getArtist() {
         return new Artist($this->con, $this->artistId);
     }
-    public function getAlbum()   {
+
+    // Funkcija atgriež Album klases objektu, kas pārstāv dziesmas albumu
+    public function getAlbum() {
         return new Album($this->con, $this->albumId);
     }
-    public function getGenre()   {
+
+    // Funkcija atgriež dziesmas žanru
+    public function getGenre() {
         return $this->genre;
     }
-    public function getDuration()   {
+
+    // Funkcija atgriež dziesmas ilgumu
+    public function getDuration() {
         return $this->duration;
     }
-    public function getPath()   {
+
+    // Funkcija atgriež dziesmas ceļu failu sistēmā
+    public function getPath() {
         return $this->path;
     }
-    public function getMysqliData()   {
+
+    // Funkcija atgriež visus dziesmas datus kā masīvu
+    public function getMysqliData() {
         return $this->mysqliData;
     }
-    public function getId()   {
+
+    // Funkcija atgriež dziesmas ID
+    public function getId() {
         return $this->id;
     }
 }

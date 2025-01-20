@@ -4,11 +4,12 @@ include("includes/includedFiles.php");
 
 <div class="userDetails">
     <div class="container borderBottom">
-        <h2>E-MAIL</h2>
-        <input type="text" class="email" name="email" placeholder="email address" value="<?php echo $userLoggedIn->getEmail(); ?>"></input>
+        <h2>Username</h2>
+        <input type="text" class="username" name="username" placeholder="username" value="<?php echo $userLoggedIn->getUsername(); ?>" />
         <span class="message"></span>
-        <button class="button" onclick="updateEmail('email')">Save</button>
+        <button class="button" onclick="updateUsername('username')">Save</button>
     </div>
+        
     <div class="container">
         <h2>PASSWORD</h2>
         <input type="password" class="oldPassword" name="oldPassword" placeholder="Current password"></input>
@@ -18,3 +19,7 @@ include("includes/includedFiles.php");
         <button class="button" onclick="updatePassword('oldPassword', 'newPassword1', 'newPassword2')">Save</button>
     </div>
 </div>
+
+<script>
+    var userLoggedIn = "<?php echo $userLoggedIn->getUsername(); ?>";
+</script>
