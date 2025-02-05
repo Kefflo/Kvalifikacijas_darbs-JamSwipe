@@ -1,124 +1,124 @@
 <?php 
-// Izvēlas nejaušus dziesmu ID no datu bāzes, ierobežojot līdz 10
+// Izvēlas nejaušus dziesmu ID no datu bāzes, ierobežojot līdz 10.
 $songQuery = mysqli_query($con, "SELECT id FROM songs ORDER BY RAND() LIMIT 10");
 $resultArray = array();
 
-// Iegūst dziesmu ID un saglabā tos masīvā
+// Iegūst dziesmu ID un saglabā tos masīvā.
 while($row = mysqli_fetch_array($songQuery)) {
     array_push($resultArray, $row['id']);
 }
 
-// Pārvērš dziesmu ID masīvu par JSON formātu, lai to varētu izmantot JavaScript
+// Pārvērš dziesmu ID masīvu par JSON formātu, lai to varētu izmantot JavaScript.
 $jsonArray = json_encode($resultArray);
 ?>
 
 <script>
     $(document).ready(function() {
-        var newPlaylist = <?php echo $jsonArray ?>;  // Iegūst dziesmu ID masīvu no PHP uz JavaScript
-        audioElement = new Audio();  // Izveido jaunu audio elementu
-        setTrack(newPlaylist[0], newPlaylist, false);  // Iestata pirmo dziesmu atskaņošanai
-        updateVolumeProgressBar(audioElement.audio);  // Atjaunina skaļuma slīdni
+        var newPlaylist = <?php echo $jsonArray ?>;  // Iegūst dziesmu ID masīvu no PHP uz JavaScript.
+        audioElement = new Audio();  // Izveido jaunu audio elementu.
+        setTrack(newPlaylist[0], newPlaylist, false);  // Iestata pirmo dziesmu atskaņošanai.
+        updateVolumeProgressBar(audioElement.audio);  // Atjaunina skaļuma slīdni.
 
-        // Novērš dzelteno indikatoru no atskaņošanas joslas, kad tiek vilkts
+        // Novērš dzelteno indikatoru no atskaņošanas joslas, kad tiek vilkts.
         $("#nowPlayingBarContainer").on("mousedown touchstart mousemove touchmove", function(e) {
             e.preventDefault();
         });
 
-        // Vadības pogu funkcionalitātes
+        // Vadības pogu funkcionalitātes.
         $(".playbackBar .progressBar").mousedown(function() {
-            mouseDown = true;  // Ja nospiests, sāk atskaņot
+            mouseDown = true;  // Ja nospiests, sāk atskaņot.
         });
 
-        // Pārvieto progresu, kad peles kustība tiek veikta
+        // Pārvieto progresu, kad peles kustība tiek veikta.
         $(".playbackBar .progressBar").mousemove(function(e) {
             if(mouseDown) {
                 var percent = e.offsetX / $(this).width();
-                audioElement.audio.currentTime = audioElement.audio.duration * percent;  // Atjaunina dziesmas laiku
+                audioElement.audio.currentTime = audioElement.audio.duration * percent;  // Atjaunina dziesmas laiku.
             }
         });
 
-        // Kad peles poga tiek atlaista, atjaunina dziesmas progresu
+        // Kad peles poga tiek atlaista, atjaunina dziesmas progresu.
         $(".playbackBar .progressBar").mouseup(function(e) {
             var percent = e.offsetX / $(this).width();
             audioElement.audio.currentTime = audioElement.audio.duration * percent; 
             mouseDown = false;
         });
 
-        // Vadības funkcionalitāte, kas regulē skaļumu
+        // Vadības funkcionalitāte, kas regulē skaļumu.
         $(".volumeBar .progressBar").mousedown(function() {
-            mouseDown = true;  // Ja nospiests, sāk mainīt skaļumu
+            mouseDown = true;  // Ja nospiests, sāk mainīt skaļumu.
         });
 
-        // Maina skaļumu, kad peles kustība tiek veikta
+        // Maina skaļumu, kad peles kustība tiek veikta.
         $(".volumeBar .progressBar").mousemove(function(e) {
             if(mouseDown) {
                 var percent = e.offsetX / $(this).width();
                 if(percent > 0.1) {
-                    audioElement.audio.volume = percent;  // Atjaunina audio skaļumu
+                    audioElement.audio.volume = percent;  // Atjaunina audio skaļumu.
                 }
             }
         });
 
-        // Kad peles poga tiek atlaista, atjaunina skaļumu
+        // Kad peles poga tiek atlaista, atjaunina skaļumu.
         $(".volumeBar .progressBar").mouseup(function(e) {
             var percent = e.offsetX / $(this).width();
             if(percent > 0.1) {
-                audioElement.audio.volume = percent;  // Atjaunina skaļumu
+                audioElement.audio.volume = percent;  // Atjaunina skaļumu.
             }
             mouseDown = false;
         });
     });
 
-    // Funkcija, lai aprēķinātu laiku no progresijas slīdņa
+    // Funkcija, lai aprēķinātu laiku no progresijas slīdņa.
     function timeFromOffset(progressBar, mouse) {
         var percentage = mouse.offsetX / $(".progressBar . playbackBar").width() * 100;
         var seconds = audioElement.audio.duration * (percentage / 100);
-        audioElement.setTime(seconds); // Iestata laiku dziesmā
+        audioElement.setTime(seconds); // Iestata laiku dziesmā.
     }
-    // Funkcija, lai atskaņotu iepriekšējo dziesmu
+    // Funkcija, lai atskaņotu iepriekšējo dziesmu.
     function prevSong() {    
         if(audioElement.audio.currentTime >= 3 || currentIndex == 0) {
-            audioElement.setTime(0);  // Ja dziesma ir noskanējusi vismaz 3 sekundes, sāk no jauna
+            audioElement.setTime(0);  // Ja dziesma ir noskanējusi vismaz 3 sekundes, sāk no jauna.
         }
         else {
-            currentIndex = currentIndex - 1; // Atgriežas pie iepriekšējās dziesmas
+            currentIndex = currentIndex - 1; // Atgriežas pie iepriekšējās dziesmas.
             setTrack(currentPlaylist[currentIndex], currentPlaylist, true)
             setTimeout(playSong, 100);
 
         }
     }
 
-    // Funkcija, lai atskaņotu nākamo dziesmu
+    // Funkcija, lai atskaņotu nākamo dziesmu.
     function nextSong() {
         if(repeat == true) {
-            audioElement.setTime(0);  // Ja ir ieslēgta atkārtošana, sāk dziesmu no jauna
+            audioElement.setTime(0);  // Ja ir ieslēgta atkārtošana, sāk dziesmu no jauna.
             playSong();
             return;
         }
 
         if(currentIndex == currentPlaylist.length - 1) {
-            currentIndex = 0;  // Ja dziesma ir pēdējā, atgriežas pie pirmās
+            currentIndex = 0;  // Ja dziesma ir pēdējā, atgriežas pie pirmās.
         }
         else {
-            currentIndex ++;  // Pāriet uz nākamo dziesmu
+            currentIndex ++;  // Pāriet uz nākamo dziesmu.
         }
         var trackToPlay = shuffle ? shufflePlaylist[currentIndex] : currentPlaylist[currentIndex];
         setTrack(currentPlaylist[currentIndex], currentPlaylist, true);
         setTimeout(playSong, 100);
     }
 
-    // Funkcija, lai aktivizētu vai deaktivizētu atkārtošanu
+    // Funkcija, lai aktivizētu vai deaktivizētu atkārtošanu.
     function setRepeat() {
         repeat = !repeat;
         if(repeat == true) {
-            $(".controlButton.repeat img").attr("src", "assets/images/icons/repeat-yellow.png"); // Maina ikonu uz dzelteno versiju
+            $(".controlButton.repeat img").attr("src", "assets/images/icons/repeat-yellow.png"); // Maina ikonu uz dzelteno versiju.
         }
         else {
-            $(".controlButton.repeat img").attr("src", "assets/images/icons/repeat.png"); // Maina ikonu uz parasto versiju
+            $(".controlButton.repeat img").attr("src", "assets/images/icons/repeat.png"); // Maina ikonu uz parasto versiju.
         }
     }
 
-    // Funkcija, lai ieslēgtu vai izslēgtu skaļumu
+    // Funkcija, lai ieslēgtu vai izslēgtu skaļumu.
     function setMute() {
         audioElement.audio.muted = !audioElement.audio.muted;
         if(audioElement.audio.muted) {
@@ -129,23 +129,23 @@ $jsonArray = json_encode($resultArray);
         }
     }
 
-    // Funkcija, lai ieslēgtu vai izslēgtu izlases atskaņošanas kārtību (nejaušības princips)
+    // Funkcija, lai ieslēgtu vai izslēgtu izlases atskaņošanas kārtību (nejaušības princips).
     function setShuffle() {
         shuffle = !shuffle;
         if(shuffle == true) {
             $(".controlButton.shuffle img").attr("src", "assets/images/icons/shuffle-yellow.png");
-            shuffleArray(shufflePlaylist); // Sajauc atskaņošanas kārtību
-            currentPlaylist = shufflePlaylist.slice();// Saglabā sajaukto atskaņošanas kārtību
+            shuffleArray(shufflePlaylist); // Sajauc atskaņošanas kārtību.
+            currentPlaylist = shufflePlaylist.slice();// Saglabā sajaukto atskaņošanas kārtību.
             currentIndex = shufflePlaylist.indexOf(audioElement.currentlyPlaying.id);
         }
         else {
-            $(".controlButton.shuffle img").attr("src", "assets/images/icons/shuffle.png"); // Atgriež sākotnējo ikonu
+            $(".controlButton.shuffle img").attr("src", "assets/images/icons/shuffle.png"); // Atgriež sākotnējo ikonu.
             currentIndex = currentPlaylist.indexOf(audioElement.currentlyPlaying.id);
 
         }
     }
 
-    // Funkcija, lai sajauktu masīvu (izmanto, kad ieslēgta izlases atskaņošana)
+    // Funkcija, lai sajauktu masīvu (izmanto, kad ieslēgta izlases atskaņošana).
     function shuffleArray(a) {
         var j, x, i;
         for (i = a.length; i; i--) {
@@ -156,135 +156,153 @@ $jsonArray = json_encode($resultArray);
         }
     }
 
-    // Funkcija, lai iestatu dziesmu, kas tiks atskaņota
+    // Funkcija, lai iestatu dziesmu, kas tiks atskaņota.
     function setTrack(trackId, newPlaylist, play) {
 
         if(newPlaylist != currentPlaylist) {
             currentPlaylist = newPlaylist;
             shufflePlaylist = currentPlaylist.slice();
-            shuffleArray(shufflePlaylist); // Sajauc dziesmu kārtību
+            shuffleArray(shufflePlaylist); // Sajauc dziesmu kārtību.
         }
 
         if(shuffle == true) {
-            currentIndex = shufflePlaylist.indexOf(trackId); // Ja ir izlase, atrod dziesmas pozīciju sajauktajā sarakstā
+            currentIndex = shufflePlaylist.indexOf(trackId); // Ja ir izlase, atrod dziesmas pozīciju sajauktajā sarakstā.
         }
         else {
-            currentIndex = currentPlaylist.indexOf(trackId); // Atrod dziesmas pozīciju sākotnējā sarakstā
+            currentIndex = currentPlaylist.indexOf(trackId); // Atrod dziesmas pozīciju sākotnējā sarakstā.
         }
 
         $.post("includes/handlers/ajax/getSongJson.php", {songId: trackId}, function(data) { 
 
             var track = JSON.parse(data);
-            $(".trackName span").text(track.title); // Iestata dziesmas nosaukumu
+            $(".trackName span").text(track.title); // Iestata dziesmas nosaukumu.
 
             $.post("includes/handlers/ajax/getArtistJson.php", {artistId: track.artist}, function(data) {
                 var artist = JSON.parse(data);
-                $(".artistName span").text(artist.name); // Iestata mākslinieka nosaukumu
+                $(".artistName span").text(artist.name); // Iestata mākslinieka nosaukumu.
                 
             });
             $.post("includes/handlers/ajax/getAlbumJson.php", {albumId: track.album}, function(data) {
                 var album = JSON.parse(data);
-                $(".albumLink img").attr("src", album.artworkPath); // Iestata albuma attēlu
+                $(".albumLink img").attr("src", album.artworkPath); // Iestata albuma attēlu.
             });
                 audioElement.setTrack(track);
 
                 if(play == true) {
-                playSong(); // Ja iestatīts atskaņot, sāk atskaņot dziesmu
+                playSong(); // Ja iestatīts atskaņot, sāk atskaņot dziesmu.
             }
         });
 
         
     }
-    // Funkcija, lai atskaņotu dziesmu un nomaina atskaņošanas ikonu uz pauzes ikonu
+    // Funkcija, lai atskaņotu dziesmu un nomaina atskaņošanas ikonu uz pauzes ikonu.
     function playSong() {
         
-        // Pārbauda, vai dziesma ir sākusies no sākuma (0 sekundēm)
+        // Pārbauda, vai dziesma ir sākusies no sākuma (0 sekundēm).
         if(audioElement.audio.currentTime == 0) {
             // Ja dziesma sākas no sākuma, nosūta POST pieprasījumu uz serveri,
-            // lai atjauninātu dziesmas atskaņojumu skaitu datu bāzē
+            // lai atjauninātu dziesmas atskaņojumu skaitu datu bāzē.
             $.post("includes/handlers/ajax/updatePlays.php", {songId: audioElement.currentlyPlaying.id});
         }
 
         $(".controlButton.play").hide();
         $(".controlButton.pause").show();
-        audioElement.play(); // Atskaņo dziesmu
+        audioElement.play(); // Atskaņo dziesmu.
     }
-     // Funkcija, kas aptur dziesmu un nomaina pauzes ikonu uz atskaņošanas ikonu
+     // Funkcija, kas aptur dziesmu un nomaina pauzes ikonu uz atskaņošanas ikonu.
     function pauseSong() {
         $(".controlButton.play").show();
         $(".controlButton.pause").hide();
-        audioElement.pause(); // Aptur dziesmu
+        audioElement.pause(); // Aptur dziesmu.
     }
 </script>
 
-<div id="nowPlayingBarContainer">
+<!-- Galvenais konteiners, kurā atrodas atskaņošanas josla -->
+<div id="nowPlayingBarContainer"> 
     <div id="nowPlayingBar">
+        
+        <!-- Kreisā sadaļa: Dziesmas informācija -->
         <div id="nowPlayingLeft">
             <div class="content">
                 <span class="albumLink">
+                    <!-- Albuma attēls ar iespēju uzklikšķināt, lai atvērtu albuma lapu -->
                     <img src="" role="link" tabindex="0" onclick="openPage('album.php?id=' + audioElement.currentlyPlaying.album)" class="albumArtwork">
                 </span>
 
                 <div class="trackInfo">
+                    <!-- Dziesmas nosaukums ar iespēju uzklikšķināt, lai atvērtu dziesmas lapu -->
                     <span class="trackName">
                         <span role="link" tabindex="0" onclick="openPage('song.php?id=' + audioElement.currentlyPlaying.id)"></span>
                     </span>
 
+                    <!-- Izpildītāja nosaukums ar iespēju uzklikšķināt, lai atvērtu izpildītāja lapu -->
                     <span class="artistName">
-                        <span role="link" tabindex="0" onclick="openPage('artist.php?id=' + audioElement.currentlyPlaying.artist)"></span></span>
+                        <span role="link" tabindex="0" onclick="openPage('artist.php?id=' + audioElement.currentlyPlaying.artist)"></span>
                     </span>
                 </div>
             </div>
         </div>  
 
+        <!-- Centrālā sadaļa: Atskaņošanas vadības pogas -->
         <div id="nowPlayingCenter">
             <div class="content playerControls">
                 
                 <div class="buttons">
+                    <!-- Sajaukšanas (shuffle) poga -->
                     <button class="controlButton shuffle" title="Shuffle button" onclick="setShuffle()">
                         <img src="assets/images/icons/shuffle.png" alt="Shuffle">
                     </button>
+                    <!-- Iepriekšējās dziesmas poga -->
                     <button class="controlButton previous" title="Previous button" onclick="prevSong()">
                         <img src="assets/images/icons/previous.png" alt="Previous">
                     </button>
+                    <!-- Atskaņošanas poga -->
                     <button class="controlButton play" title="Play button" onclick="playSong()">
                         <img src="assets/images/icons/play.png" alt="Play">
                     </button>
+                    <!-- Pauzes poga (slēpta pēc noklusējuma) -->
                     <button class="controlButton pause" title="Pause button" style="display: none;" onclick="pauseSong()">
                         <img src="assets/images/icons/pause.png" alt="Pause">
                     </button>
+                    <!-- Nākamās dziesmas poga -->
                     <button class="controlButton next" title="Next button" onclick="nextSong()">
                         <img src="assets/images/icons/next.png" alt="Next">
                     </button>
+                    <!-- Atkārtošanas (repeat) poga -->
                     <button class="controlButton repeat" title="Repeat button" onclick="setRepeat()">
                         <img src="assets/images/icons/repeat.png" alt="Repeat">
                     </button>
                 </div>
+
+                <!-- Progresijas josla, kas rāda atskaņošanas progresu -->
                 <div class="playbackBar">
-                    <span class="progressTime current">0.00</span>
+                    <span class="progressTime current">0.00</span> <!-- Pašreizējais dziesmas laiks -->
 
                     <div class="progressBar">
                         <div class="progressBarBg">
-                            <div class="progress"></div>
+                            <div class="progress"></div> <!-- Progresijas josla, kas piepildās atskaņošanas laikā -->
                         </div>
                     </div>
 
-                    <span class="progressTime remaining">0.00</span>
+                    <span class="progressTime remaining">0.00</span> <!-- Atlikušais dziesmas laiks -->
                 </div>
 
             </div>
         </div>
         
+        <!-- Labā sadaļa: Skaļuma vadība -->
         <div id="nowPlayingRight">
             <div class="volumeBar">
+                <!-- Skaļuma poga ar iespēju izslēgt skaņu -->
                 <button class="controlButton volume" title="Volume button">
                     <img src="assets/images/icons/volume.png" alt="Volume" onclick="setMute()">
                 </button>
 
+                <!-- Skaļuma josla -->
                 <div class="progressBar">
-                        <div class="progressBarBg">
-                            <div class="progress"></div>
-                        </div>
+                    <div class="progressBarBg">
+                        <div class="progress"></div> <!-- Skaļuma līmeņa indikators -->
+                    </div>
                 </div>
             </div>
         </div>   

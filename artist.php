@@ -1,15 +1,15 @@
 <?php
 
-include("includes/includedFiles.php"); // Iekļauj nepieciešamos failus, kas satur funkcijas un konfigurācijas
+include("includes/includedFiles.php"); // Iekļauj nepieciešamos failus, kas satur funkcijas un konfigurācijas.
 
-if(isset($_GET['id'])) { // Pārbauda, vai URL satur 'id' parametru
-    $artistId = $_GET['id']; // Saglabā mākslinieka ID, ja tas ir pieejams
+if(isset($_GET['id'])) { // Pārbauda, vai URL satur 'id' parametru.
+    $artistId = $_GET['id']; // Saglabā mākslinieka ID, ja tas ir pieejams.
 }
-else { // Ja 'id' parametrs nav norādīts
-    header("Location: index.php"); // Pārsūta lietotāju uz galveno lapu
+else { // Ja 'id' parametrs nav norādīts.
+    header("Location: index.php"); // Pārsūta lietotāju uz galveno lapu.
 }
 
-$artist = new Artist($con, $artistId); // Izveido mākslinieka objektu, izmantojot mākslinieka ID
+$artist = new Artist($con, $artistId); // Izveido mākslinieka objektu, izmantojot mākslinieka ID.
 ?>
 
 <div class="entityInfo borderBottom"> <!-- Sāk mākslinieka informācijas sadaļu ar apakšējo malu -->
@@ -29,16 +29,16 @@ $artist = new Artist($con, $artistId); // Izveido mākslinieka objektu, izmantoj
     <h2>Popular</h2> <!-- Populāru dziesmu virsraksts -->
 
         <?php
-            $songIdArray = $artist->getSongIds(); // Iegūst visu dziesmu ID no mākslinieka
+            $songIdArray = $artist->getSongIds(); // Iegūst visu dziesmu ID no mākslinieka.
             $i = 1; // Dziesmu secības numurs
-            foreach($songIdArray as $songId) { // Cikls, kas pārskata katru dziesmas ID
+            foreach($songIdArray as $songId) { // Cikls, kas pārskata katru dziesmas ID.
 
-                if($i > 5) { // Aptur ciklu pēc 5 dziesmām
+                if($i > 5) { // Aptur ciklu pēc 5 dziesmām.
                     break;
                 }
 
-                $albumSong = new Song($con, $songId); // Izveido dziesmas objektu, izmantojot dziesmas ID
-                $albumArtist = $albumSong->getArtist(); // Iegūst mākslinieku, kas saistīts ar dziesmu
+                $albumSong = new Song($con, $songId); // Izveido dziesmas objektu, izmantojot dziesmas ID.
+                $albumArtist = $albumSong->getArtist(); // Iegūst mākslinieku, kas saistīts ar dziesmu.
 
                 // Izvada katru dziesmu sarakstā
                 echo "<li class='trackListRow'>
@@ -61,13 +61,13 @@ $artist = new Artist($con, $artistId); // Izveido mākslinieka objektu, izmantoj
                             <span class='duration'>" . $albumSong->getDuration() . "</span>
                         </div>
                     </li>";
-                $i++; // Palielina dziesmas numuru
+                $i++; // Palielina dziesmas numuru.
             }
         ?>
 
         <script>
             var tempSongIds = '<?php echo json_encode($songIdArray); ?>';
-            tempPlaylist = JSON.parse(tempSongIds); // Parsē JSON formāta masīvu
+            tempPlaylist = JSON.parse(tempSongIds); // Parsē JSON formāta masīvu.
         </script>
 
     </ul>
@@ -77,14 +77,14 @@ $artist = new Artist($con, $artistId); // Izveido mākslinieka objektu, izmantoj
     <h2>Discography</h2> <!-- Dziesmu diskogrāfijas virsraksts -->
 
     <?php 
-        $albumQuery = mysqli_query($con, "SELECT * FROM albums WHERE artist='$artistId'"); // Veic vaicājumu, lai iegūtu albumus, kas saistīti ar mākslinieku
+        $albumQuery = mysqli_query($con, "SELECT * FROM albums WHERE artist='$artistId'"); // Veic vaicājumu, lai iegūtu albumus, kas saistīti ar mākslinieku.
 
-        while($row = mysqli_fetch_array($albumQuery)) { // Cikls, kas pārskata katru albumu
+        while($row = mysqli_fetch_array($albumQuery)) { // Cikls, kas pārskata katru albumu.
             echo "<div class='gridViewItem'>
                     <span role='link' tabindex='0' onclick='openPage(\"album.php?id=" . $row['id'] . "\")' >
                         <img src='" . $row['artworkPath'] . "'> 
                         <div class='gridViewInfo'>"
-                            . $row['title'] . // Izvērš albuma nosaukumu
+                            . $row['title'] . // Izvērš albuma nosaukumu.
                         "</div>
                     </span>
                 </div>";

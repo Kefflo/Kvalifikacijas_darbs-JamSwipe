@@ -1,14 +1,14 @@
-<?php include("includes/includedFiles.php"); // Iekļauj nepieciešamos failus, kas satur konfigurācijas un funkcijas
-if(isset($_GET['id'])) { // Pārbauda, vai URL satur 'id' parametru
-    $albumId = $_GET['id']; // Saglabā albumu ID, ja tas ir pieejams
+<?php include("includes/includedFiles.php"); // Iekļauj nepieciešamos failus, kas satur konfigurācijas un funkcijas.
+if(isset($_GET['id'])) { // Pārbauda, vai URL satur 'id' parametru.
+    $albumId = $_GET['id']; // Saglabā albumu ID, ja tas ir pieejams.
 }
-else { // Ja 'id' parametrs nav norādīts
-    header("Location: index.php"); // Pārsūta lietotāju uz galveno lapu
+else { // Ja 'id' parametrs nav norādīts.
+    header("Location: index.php"); // Pārsūta lietotāju uz galveno lapu.
 }
 
-// Izveido albumu objektu, izmantojot albumu ID
+// Izveido albumu objektu, izmantojot albumu ID.
 $album = new Album($con, $albumId);
-// Iegūst mākslinieku, kas saistīts ar šo albumu
+// Iegūst mākslinieku, kas saistīts ar šo albumu.
 $artist = $album->getArtist();
 ?>
 
@@ -26,16 +26,16 @@ $artist = $album->getArtist();
 <div class="trackListContainer"> <!-- Sāk dziesmu saraksta konteineru -->
     <ul class="trackList"> <!-- Saraksts, kurā tiks izvietotas dziesmas -->
         <?php
-            // Iegūst visu dziesmu ID no albuma
+            // Iegūst visu dziesmu ID no albuma.
             $songIdArray = $album->getSongIds();
-            $i = 1; // Dziesmu secības numurs
-            foreach($songIdArray as $songId) { // Cikls, kas pārskata katru dziesmas ID
-                // Izveido dziesmas objektu, izmantojot dziesmas ID
+            $i = 1; // Dziesmu secības numurs.
+            foreach($songIdArray as $songId) { // Cikls, kas pārskata katru dziesmas ID.
+                // Izveido dziesmas objektu, izmantojot dziesmas ID.
                 $albumSong = new Song($con, $songId);
-                // Iegūst mākslinieku, kas saistīts ar dziesmu
+                // Iegūst mākslinieku, kas saistīts ar dziesmu.
                 $albumArtist = $albumSong->getArtist();
 
-                // Izvada katru dziesmu sarakstā
+                // Izvada katru dziesmu sarakstā.
                 echo "<li class='trackListRow'>
                         <div class='trackCount'>
                             <img class='play' src='assets/images/icons/play-white.png' onclick ='setTrack(\"". $albumSong->getId() . "\", tempPlaylist, setTimeout(playSong, 100))'>
@@ -61,9 +61,9 @@ $artist = $album->getArtist();
         ?>
 
         <script>
-            // Izveido pagaidu dziesmu ID masīvu, kuru izmantos JavaScript
+            // Izveido pagaidu dziesmu ID masīvu, kuru izmantos JavaScript.
             var tempSongIds = '<?php echo json_encode($songIdArray); ?>';
-            tempPlaylist = JSON.parse(tempSongIds); // Parsē JSON formāta masīvu
+            tempPlaylist = JSON.parse(tempSongIds); // Parsē JSON formāta masīvu.
         </script>
     </ul>
 </div>

@@ -1,20 +1,20 @@
 <?php
-    include("includes/config.php");  // Iekļauj konfigurācijas failu, kas satur savienojuma informāciju ar datubāzi
-    include("includes/classes/User.php");  // Iekļauj lietotāja klasi
-    include("includes/classes/Artist.php");  // Iekļauj mākslinieka klasi
-    include("includes/classes/Album.php");   // Iekļauj albuma klasi
-    include("includes/classes/Song.php");    // Iekļauj dziesmas klasi
-    include("includes/classes/Playlist.php");  // Iekļauj atskaņošanas saraksta klasi
+    include("includes/config.php");  // Iekļauj konfigurācijas failu, kas satur savienojuma informāciju ar datubāzi.
+    include("includes/classes/User.php");  // Iekļauj lietotāja klasi.
+    include("includes/classes/Artist.php");  // Iekļauj mākslinieka klasi.
+    include("includes/classes/Album.php");   // Iekļauj albuma klasi.
+    include("includes/classes/Song.php");    // Iekļauj dziesmas klasi.
+    include("includes/classes/Playlist.php");  // Iekļauj atskaņošanas saraksta klasi.
 
 
-// Pārbauda, vai lietotājs ir pieteicies (session mainīgais 'userLoggedIn' ir iestatīts)
+// Pārbauda, vai lietotājs ir pieteicies (session mainīgais 'userLoggedIn' ir iestatīts).
 if(isset($_SESSION['userLoggedIn'])) {
     $userLoggedIn = new User($con, $_SESSION['userLoggedIn']); 
     $username = $userLoggedIn->getUsername();
-    echo "<script>userLoggedIn = '$username';</script>";  // Iesniedz pieteikušos lietotāju JavaScript mainīgajam
+    echo "<script>userLoggedIn = '$username';</script>";  // Iesniedz pieteikušos lietotāju JavaScript mainīgajam.
 }
 else {
-    header("Location: register.php");  // Ja lietotājs nav pieteicies, pārsūta uz reģistrācijas lapu
+    header("Location: register.php");  // Ja lietotājs nav pieteicies, pārsūta uz reģistrācijas lapu.
 }
 ?>
 

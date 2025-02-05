@@ -1,20 +1,20 @@
 <?php
-include("includes/includedFiles.php"); // Iekļauj nepieciešamos failus, piemēram, datubāzes savienojuma un funkcionalitātes failus
+include("includes/includedFiles.php"); // Iekļauj nepieciešamos failus, piemēram, datubāzes savienojuma un funkcionalitātes failus.
 
-// Pārbauda, vai ir ievadīta meklēšanas frāze
+// Pārbauda, vai ir ievadīta meklēšanas frāze.
 if(isset($_GET['term'])) {
-    $term = urldecode($_GET['term']); // Ja ir, dekodē meklēšanas frāzi
+    $term = urldecode($_GET['term']); // Ja ir, dekodē meklēšanas frāzi.
 } else {
-    $term = ""; // Ja nav, iestata tukšu meklēšanas frāzi
+    $term = ""; // Ja nav, iestata tukšu meklēšanas frāzi.
 }
 
-// Pārbauda, vai datubāzē ir mākslinieki, kuru nosaukums sākas ar meklēšanas frāzi
+// Pārbauda, vai datubāzē ir mākslinieki, kuru nosaukums sākas ar meklēšanas frāzi.
 $artistQuery = mysqli_query($con, "SELECT * FROM artists WHERE name LIKE '$term%' LIMIT 10");
 
-// Ja nav mākslinieku ar šo nosaukumu, pārbauda, vai ir albumi, kuru nosaukums sākas ar meklēšanas frāzi
+// Ja nav mākslinieku ar šo nosaukumu, pārbauda, vai ir albumi, kuru nosaukums sākas ar meklēšanas frāzi.
 if(mysqli_num_rows($artistQuery) == 0) {
     $albumQuery = mysqli_query($con, "SELECT * FROM albums WHERE title LIKE '$term%' LIMIT 10");
-    // Ja nav albumu, pārbauda, vai ir dziesmas, kuru nosaukums vai mākslinieks atbilst meklēšanas frāzei
+    // Ja nav albumu, pārbauda, vai ir dziesmas, kuru nosaukums vai mākslinieks atbilst meklēšanas frāzei.
     if(mysqli_num_rows($albumQuery) == 0) {
         $songQuery = mysqli_query($con, "SELECT * FROM songs WHERE title LIKE '$term%' OR artist LIKE '$term%' LIMIT 10");
     }
@@ -27,25 +27,25 @@ if(mysqli_num_rows($artistQuery) == 0) {
 </div>
 
 <script >
-// Jquery kods, lai notīrītu meklēšanas lauku, kad tas iegūst fokusu
+// Jquery kods, lai notīrītu meklēšanas lauku, kad tas iegūst fokusu.
 $(".searchInput").focus(function() {
-    $(this).val(""); // Iztīra meklēšanas lauku, kad tas tiek aktivizēts
+    $(this).val(""); // Iztīra meklēšanas lauku, kad tas tiek aktivizēts.
 });
 
-// Funkcija, kas veic meklēšanas pieprasījumu, kad lietotājs ievada tekstu
+// Funkcija, kas veic meklēšanas pieprasījumu, kad lietotājs ievada tekstu.
 $(function() {
     $(".searchInput").keyup(function() {
-        clearTimeout(timer); // Notīra iepriekšējo laika taimeri
+        clearTimeout(timer); // Notīra iepriekšējo laika taimeri.
         timer = setTimeout(function() {
-            var val = $(".searchInput").val(); // Iegūst meklēšanas ievadīto vērtību
-            openPage("search.php?term=" + val); // Atjaunina lapu ar jauniem meklēšanas rezultātiem
-        }, 2000); // Atjauno lapu pēc 2 sekundēm
+            var val = $(".searchInput").val(); // Iegūst meklēšanas ievadīto vērtību.
+            openPage("search.php?term=" + val); // Atjaunina lapu ar jauniem meklēšanas rezultātiem.
+        }, 2000); // Atjauno lapu pēc 2 sekundēm.
     });
 });
 </script>
 
 <?php  
- if ($term == "") exit(); // Ja meklēšanas frāze ir tukša, apstājas tālāka apstrāde
+ if ($term == "") exit(); // Ja meklēšanas frāze ir tukša, apstājas tālāka apstrāde.
 ?>
 
 <div class="trackListContainer borderBottom"> <!-- Dziesmu saraksta konteineris -->
@@ -53,25 +53,25 @@ $(function() {
     <h2>Songs</h2> <!-- Virsraksts dziesmām -->
 
         <?php
-        // Izpilda SQL pieprasījumu, lai iegūtu dziesmas, kuru nosaukums vai mākslinieks atbilst meklēšanas frāzei
+        // Izpilda SQL pieprasījumu, lai iegūtu dziesmas, kuru nosaukums vai mākslinieks atbilst meklēšanas frāzei.
         $songsQuery = mysqli_query($con, "SELECT id FROM songs WHERE title LIKE '$term%' OR artist LIKE '$term%' ORDER BY plays DESC LIMIT 10");
 
-        // Ja nav atrastas dziesmas, izvada ziņu
+        // Ja nav atrastas dziesmas, izvada ziņu.
         if(mysqli_num_rows($songsQuery) == 0) {
             echo "<span class='noResults'>No results found for " . $term . "</span>";
         }
 
-        $songIdArray = array(); // Masīvs, kurā tiek glabāti dziesmu ID
-        $i = 1; // Skaitītājs dziesmu rindas numerācijai
-        while($row = mysqli_fetch_array($songsQuery)) { // Pārlasa katru atrasto dziesmu
-            array_push($songIdArray, $row['id']); // Pievieno dziesmas ID masīvam
+        $songIdArray = array(); // Masīvs, kurā tiek glabāti dziesmu ID.
+        $i = 1; // Skaitītājs dziesmu rindas numerācijai.
+        while($row = mysqli_fetch_array($songsQuery)) { // Pārlasa katru atrasto dziesmu.
+            array_push($songIdArray, $row['id']); // Pievieno dziesmas ID masīvam.
 
-            if($i > 10) { // Ja ir vairāk nekā 10 dziesmas, iznāk no cikla
+            if($i > 10) { // Ja ir vairāk nekā 10 dziesmas, iznāk no cikla.
                 break;
             }
 
-            $albumSong = new Song($con, $row['id']); // Izveido dziesmas objektu, izmantojot ID
-            $albumArtist = $albumSong->getArtist(); // Iegūst dziesmas mākslinieku
+            $albumSong = new Song($con, $row['id']); // Izveido dziesmas objektu, izmantojot ID.
+            $albumArtist = $albumSong->getArtist(); // Iegūst dziesmas mākslinieku.
 
             echo "<li class='trackListRow'>
                     <div class='trackCount'>
@@ -93,13 +93,13 @@ $(function() {
                         <span class='duration'>" . $albumSong->getDuration() . "</span>
                     </div>
                 </li>";
-            $i++; // Pāriet pie nākamās dziesmas
+            $i++; // Pāriet pie nākamās dziesmas.
         }
         ?>
 
         <script>
-            var tempSongIds = '<?php echo json_encode($songIdArray); ?>'; // Iegūst dziesmu ID masīvu
-            tempPlaylist = JSON.parse(tempSongIds); // Parsē dziesmu ID masīvu
+            var tempSongIds = '<?php echo json_encode($songIdArray); ?>'; // Iegūst dziesmu ID masīvu.
+            tempPlaylist = JSON.parse(tempSongIds); // Parsē dziesmu ID masīvu.
         </script>
 
     </ul>
@@ -109,17 +109,17 @@ $(function() {
     <h2>Artists</h2> <!-- Virsraksts māksliniekiem -->
 
     <?php
-    // Izpilda SQL pieprasījumu, lai iegūtu māksliniekus, kuru nosaukums atbilst meklēšanas frāzei
+    // Izpilda SQL pieprasījumu, lai iegūtu māksliniekus, kuru nosaukums atbilst meklēšanas frāzei.
     $artistQuery = mysqli_query($con, "SELECT id FROM artists WHERE name LIKE '$term%' LIMIT 10");
 
-    // Ja nav atrasti mākslinieki, izvada ziņu
+    // Ja nav atrasti mākslinieki, izvada ziņu.
     if(mysqli_num_rows($artistQuery) == 0) {
         echo "<span class='noResults'>No results found for " . $term . "</span>";
     }
 
-    // Pārlasa atrastos māksliniekus un izvada tos
+    // Pārlasa atrastos māksliniekus un izvada tos.
     while($row = mysqli_fetch_array($artistQuery)) {
-        $artist = new Artist($con, $row['id']); // Izveido mākslinieka objektu
+        $artist = new Artist($con, $row['id']); // Izveido mākslinieka objektu.
         echo "<div class='searchResultRow'>
                 <div class='artistName'>
                     <span role='link' tabindex='0' onclick='openPage(\"artist.php?id=" . $artist->getId() . "\")'>
@@ -135,15 +135,15 @@ $(function() {
     <h2>Albums</h2> <!-- Virsraksts albūmiem -->
 
     <?php 
-    // Izpilda SQL pieprasījumu, lai iegūtu albumus, kuru nosaukums atbilst meklēšanas frāzei
+    // Izpilda SQL pieprasījumu, lai iegūtu albumus, kuru nosaukums atbilst meklēšanas frāzei.
     $albumQuery = mysqli_query($con, "SELECT * FROM albums WHERE title LIKE '$term%' LIMIT 10");
 
-    // Ja nav atrasti albumi, izvada ziņu
+    // Ja nav atrasti albumi, izvada ziņu.
     if(mysqli_num_rows($albumQuery) == 0) {
         echo "<span class='noResults'>No results found for " . $term . "</span>";
     }
 
-    // Pārlasa atrastos albumus un izvada tos
+    // Pārlasa atrastos albumus un izvada tos.
     while($row = mysqli_fetch_array($albumQuery)) {
         echo "<div class='gridViewItem'>
                 <span role='link' tabindex='0' onclick='openPage(\"album.php?id=" . $row['id'] . "\")' >
